@@ -1,0 +1,4 @@
+/target
+*.dll
+sdl_event_server
+sdl_event_server.exe

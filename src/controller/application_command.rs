@@ -1,0 +1,162 @@
+use serde::{Serialize, Deserialize};
+
+use crate::{
+    model::application_model::ApplicationModel,
+    controller::stdio_interface::StdioInterface
+};
+use serde_json::json;
+
+#[derive(Clone, Serialize, Deserialize)]
+pub enum ApplicationCommand {
+    GetAnarchyMode,
+    SetAnarchyMode { anarchy_mode: bool },
+    GetIp,
+    SetIp { ip: String },
+    GetDelay { i: usize },
+    SetDelay { i: usize, delay: u8 },
+    GetLeftDeadzoneRadius { i: usize },
+    SetLeftDeadzoneRadius { i: usize, deadzone_radius: f32 },
+    GetRightDeadzoneRadius { i: usize },
+    SetRightDeadzoneRadius { i: usize, deadzone_radius: f32 },
+    Swap { i: usize, j: usize },
+    Connect,
+    Disconnect,
+    Exit,
+    Unsupported
+}
+
+fn write(stdio_if: &mut StdioInterface, result: Result<String, String>) -> () {
+    stdio_if.write(json!(result).to_string())
+        .expect("Failed to write to stdout buffer.");
+}
+
+impl ApplicationCommand {
+    pub fn execute(
+        self, model: &mut ApplicationModel, stdio_if: &mut StdioInterface
+    ) -> () {
+        let ok: bool;
+        let out: String;
+        match self {
+            Self::GetAnarchyMode => {
+                match model.get_anarchy_mode() {
+                    Err(e) => { ok = false; out = e },
+                    Ok(anarchy_mode) => {
+                        ok = true;
+                        out = anarchy_mode.to_string()
+                    }
+                }
+            },
+            Self::SetAnarchyMode { anarchy_mode } => {
+                match model.set_anarchy_mode(anarchy_mode) {
+                    Err(e) => { ok = false; out = e },
+                    Ok(_) => {
+                        ok = true;
+                        out = String::from("Successfully set anarchy mode.")
+                    }
+                }
+            },
+            Self::GetIp => match model.get_ip() {
+                Err(e) => { ok = false; out = e },
+                Ok(ip) => { ok = true; out = ip } 
+            },
+            Self::SetIp { ip } => match model.set_ip(ip) {
+                Err(e) => { ok = false; out = e },
+                Ok(_) => {
+                    ok = true;
+                    out = String::from("Successfully set IP.");
+                }
+            },
+            Self::GetDelay { i } => {
+                match model.get_delay(i) {
+                    Err(e) => { ok = false; out = e },
+                    Ok(delay) => { ok = true; out = delay.to_string() }
+                }
+            },
+            Self::SetDelay { i, delay } => {
+                match model.set_delay(i, delay) { 
+                    Err(e) => { ok = false; out = e },
+                    Ok(_) => {
+                        ok = true;
+                        out = format!(
+                            "Successfully set delay of gamepad {}.", i)
+                    }
+                }
+            },
+            Self::GetLeftDeadzoneRadius { i } => {
+                match model.get_left_deadzone_radius(i) {
+                    Err(e) => { ok = false; out = e },
+                    Ok(deadzone_radius) => {
+                        ok = true;
+                        out = deadzone_radius.to_string()
+                    }
+                }
+            },
+            Self::SetLeftDeadzoneRadius {
+                i, deadzone_radius
+            } => match model.set_left_deadzone_radius(i, deadzone_radius) {
+                Err(e) => { ok = false; out = e },
+                Ok(_) => {
+                    ok = true;
+                    out = format!(
+                        "Successfully set left deadzone of gamepad {}.", i)
+                }
+            },
+            Self::GetRightDeadzoneRadius { i } => {
+                match model.get_right_deadzone_radius(i) {
+                    Err(e) => { ok = false; out = e },
+                    Ok(deadzone_radius) => {
+                        ok = true;
+                        out = deadzone_radius.to_string()
+                    }
+                }
+            },
+            Self::SetRightDeadzoneRadius {
+                i, deadzone_radius
+            } => match model.set_right_deadzone_radius(i, deadzone_radius) {
+                Err(e) => { ok = false; out = e },
+                Ok(_) => {
+                    ok = true;
+                    out = format!(
+                        "Successfully set right deadzone of gamepad {}.", i)
+                }
+            },
+            Self::Swap { i, j } => match model.swap(i, j) {
+                Err(e) => { ok = false; out = e },
+                Ok(_) => {
+                    ok = true;
+                    out = format!(
+                        "Successfully swapped gamepads {} and {}.", i, j)
+                }
+            },
+            Self::Connect => match model.connect() {
+                Err(e) => { ok = false; out = e },
+                Ok(_) => {
+                    ok = true;
+                    out = String::from("Now sending packets.")
+                }
+            },
+            Self::Disconnect => match model.disconnect() {
+                Err(e) => { ok = false; out = e },
+                Ok(_) => {
+                    ok = true;
+                    out = String::from("No longer sending packets.")
+                }
+            },
+            Self::Exit => match model.exit() {
+                Err(e) => { ok = false; out = e },
+                Ok(_) => {
+                    ok = true;
+                    out = String::from("Successfully exited.")
+                }
+            },
+            Self::Unsupported => {
+                ok = false;
+                out = String::from("The given command is unsupported.")
+            }
+        }
+        write(stdio_if, match ok {
+            false => Err(out),
+            true => Ok(out)
+        });
+    }
+}

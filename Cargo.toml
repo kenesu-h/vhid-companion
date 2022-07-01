@@ -1,0 +1,13 @@
+[package]
+name = "vhid_companion"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+crossbeam-channel = "0.5"
+sdl_event_server = { git = "https://github.com/kenesu-h/sdl-event-server" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+structure = "0.1"
