@@ -7,6 +7,12 @@ use crate::{
 use serde_json::json;
 
 #[derive(Clone, Serialize, Deserialize)]
+/// Commands accepted by this application.
+///
+/// This application accepts these commands through the controller, which reads
+/// from stdin. As long as you correctly serialize these commands as JSON and
+/// pass them through stdin, the controller should be able to parse them down
+/// into their respective enumerations.
 pub enum ApplicationCommand {
     GetAnarchyMode,
     SetAnarchyMode { anarchy_mode: bool },
@@ -18,10 +24,16 @@ pub enum ApplicationCommand {
     SetLeftDeadzone { i: usize, deadzone: f32 },
     GetRightDeadzone { i: usize },
     SetRightDeadzone { i: usize, deadzone: f32 },
-    Swap { i: usize, j: usize },
+
+    // RunScript { i: usize, script: Vec<SimpleEvent> },
     Connect,
     Disconnect,
     Exit,
+
+    // These will probably go unused by the Tauri end, but will stay in case
+    // anyone else finds a decent use for them.
+    Swap { i: usize, j: usize },
+
     Unsupported
 }
 
