@@ -142,7 +142,7 @@ impl AnalogStick {
 #[derive(Copy, Clone)]
 pub struct Gamepad {
     gamepad_type: GamepadType,
-    delay: u8,
+    delay: usize,
 
     buttons: i32,
     left_stick: AnalogStick,
@@ -165,11 +165,11 @@ impl Gamepad {
         return &self.gamepad_type;
     }
 
-    pub fn get_delay(&self) -> u8 {
+    pub fn get_delay(&self) -> usize {
         return self.delay;
     }
 
-    pub fn set_delay(&mut self, delay: u8) -> () {
+    pub fn set_delay(&mut self, delay: usize) -> () {
         self.delay = delay;
     }
 

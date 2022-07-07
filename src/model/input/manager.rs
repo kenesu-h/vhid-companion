@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 
-use crate::model::input::gamepad::{GamepadType, Gamepad};
+use crate::model::input::{
+    gamepad::{GamepadType, Gamepad},
+    script_event::ScriptEvent
+};
 use sdl_event_server::{SdlButton, SdlEvent};
 
 pub const NUM_GAMEPADS: usize = 8;
@@ -11,7 +14,7 @@ pub struct GamepadManager {
     gamepads: [Gamepad; NUM_GAMEPADS],
     indices: HashMap<usize, usize>,
 
-    buffer: Vec<(SdlEvent, u8)>
+    buffer: Vec<(SdlEvent, usize)>
 }
 
 impl GamepadManager {
@@ -37,11 +40,11 @@ impl GamepadManager {
         return self.gamepads.clone();
     }
 
-    pub fn get_delay(&self, i: usize) -> u8 {
+    pub fn get_delay(&self, i: usize) -> usize {
         return self.gamepads[i].get_delay();
     }
 
-    pub fn set_delay(&mut self, i: usize, delay: u8) -> () {
+    pub fn set_delay(&mut self, i: usize, delay: usize) -> () {
         self.gamepads[i].set_delay(delay);
     }
 
@@ -59,6 +62,10 @@ impl GamepadManager {
 
     pub fn set_right_deadzone(&mut self, i: usize, deadzone: f32) -> () {
         self.gamepads[i].set_right_deadzone(deadzone);
+    }
+
+    pub fn read_script_event(&mut self, i: usize, event: ScriptEvent) -> () {
+        let delay: usize = 0;
     }
 
     pub fn swap(&mut self, i: usize, j: usize) -> () {

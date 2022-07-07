@@ -1,7 +1,10 @@
 use serde::{Serialize, Deserialize};
 
 use crate::{
-    model::application_model::ApplicationModel,
+    model::{
+        application_model::ApplicationModel,
+        input::script_event::ScriptEvent
+    },
     controller::stdio_interface::StdioInterface
 };
 use serde_json::json;
@@ -19,13 +22,13 @@ pub enum ApplicationCommand {
     GetIps,
     SetIps { ips: Vec<String> },
     GetDelay { i: usize },
-    SetDelay { i: usize, delay: u8 },
+    SetDelay { i: usize, delay: usize },
     GetLeftDeadzone { i: usize },
     SetLeftDeadzone { i: usize, deadzone: f32 },
     GetRightDeadzone { i: usize },
     SetRightDeadzone { i: usize, deadzone: f32 },
 
-    // RunScript { i: usize, script: Vec<SimpleEvent> },
+    RunScript { i: usize, script: Vec<ScriptEvent> },
     Connect,
     Disconnect,
     Exit,
@@ -46,7 +49,7 @@ impl ApplicationCommand {
     pub fn execute(
         self, model: &mut ApplicationModel, stdio_if: &mut StdioInterface
     ) -> () {
-        let ok: bool;
+        let mut ok: bool;
         let out: String;
         match self {
             Self::GetAnarchyMode => {
@@ -132,12 +135,20 @@ impl ApplicationCommand {
                         "Successfully set right deadzone of gamepad {}.", i)
                 }
             },
-            Self::Swap { i, j } => match model.swap(i, j) {
-                Err(e) => { ok = false; out = e },
-                Ok(_) => {
-                    ok = true;
+            Self::RunScript {
+                i, script
+            } => {
+                ok = true;
+                for event in script {
+                    if let Err(_) = model.read_script_event(i, event) {
+                        ok &= false;
+                    }
+                }
+                if ok {
                     out = format!(
-                        "Successfully swapped gamepads {} and {}.", i, j)
+                        "Successfully ran script for gamepad {}.", i)
+                } else {
+                    out = format!("Failed to run script for gamepad {}.", i);
                 }
             },
             Self::Connect => match model.connect() {
@@ -159,6 +170,14 @@ impl ApplicationCommand {
                 Ok(_) => {
                     ok = true;
                     out = String::from("Successfully exited.")
+                }
+            },
+            Self::Swap { i, j } => match model.swap(i, j) {
+                Err(e) => { ok = false; out = e },
+                Ok(_) => {
+                    ok = true;
+                    out = format!(
+                        "Successfully swapped gamepads {} and {}.", i, j)
                 }
             },
             Self::Unsupported => {

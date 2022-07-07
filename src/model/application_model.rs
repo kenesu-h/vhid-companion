@@ -9,7 +9,10 @@ use std::{
 };
 
 use crate::model::{
-    input::manager::GamepadManager,
+    input::{
+        manager::GamepadManager,
+        script_event::ScriptEvent
+    },
     sdl_interface::{SdlReader, SdlWriter},
     sysmodule_interface::SysmoduleInterface
 };
@@ -167,7 +170,7 @@ impl ApplicationModel {
         }
     }
 
-    pub fn get_delay(&self, i: usize) -> Result<u8, String> {
+    pub fn get_delay(&self, i: usize) -> Result<usize, String> {
         if let Ok(gamepad_manager) = self.gamepad_manager_mtx.lock() {
             return Ok(gamepad_manager.get_delay(i));
         } else {
@@ -175,7 +178,7 @@ impl ApplicationModel {
         }
     }
 
-    pub fn set_delay(&mut self, i: usize, delay: u8) -> Result<(), String> {
+    pub fn set_delay(&mut self, i: usize, delay: usize) -> Result<(), String> {
         if let Ok(mut gamepad_manager) = self.gamepad_manager_mtx.lock() {
             gamepad_manager.set_delay(i, delay);
             return Ok(());
@@ -216,6 +219,15 @@ impl ApplicationModel {
     ) -> Result<(), String> {
         if let Ok(mut gamepad_manager) = self.gamepad_manager_mtx.lock() {
             gamepad_manager.set_right_deadzone(i, deadzone);
+            return Ok(());
+        } else {
+            return Err(String::from("Failed to lock gamepad manager."));
+        }
+    }
+
+    pub fn read_script_event(&mut self, i: usize, event: ScriptEvent) -> Result<(), String> {
+        if let Ok(mut gamepad_manager) = self.gamepad_manager_mtx.lock() {
+            gamepad_manager.read_script_event(i, event);
             return Ok(());
         } else {
             return Err(String::from("Failed to lock gamepad manager."));
