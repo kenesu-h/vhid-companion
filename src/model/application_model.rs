@@ -250,20 +250,24 @@ impl ApplicationModel {
     }
 
     pub fn connect(&mut self) -> Result<(), String> {
-        if let Ok(sys_if) = self.sys_if_mtx.lock() {
-            if sys_if.get_ips().len() == 0 {
-                return Err(String::from("Cannot connect without an IP."));
+        if !self.state.get_connected().load(Ordering::Relaxed) {
+            if let Ok(sys_if) = self.sys_if_mtx.lock() {
+                if sys_if.get_ips().len() == 0 {
+                    return Err(String::from("Cannot connect without any IPs."));
+                } else {
+                    self.state.set_connected(true);
+                    return Ok(());
+                }
             } else {
-                self.state.set_connected(true);
-                return Ok(());
+                return Err(String::from("Failed to lock sysmodule interface."));
             }
         } else {
-            return Err(String::from("Failed to lock sysmodule interface."));
+            return Err(String::from("Already connected to sysmodule."));
         }
     }
 
     pub fn disconnect(&mut self) -> Result<(), String> {
-        if !self.state.get_connected().load(Ordering::Relaxed) {
+        if self.state.get_connected().load(Ordering::Relaxed) {
             self.state.set_connected(false);
             return Ok(());
         } else {
