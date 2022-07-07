@@ -79,14 +79,14 @@ impl GamepadButton {
 #[derive(Copy, Clone)]
 pub struct AnalogStick {
     position: (i16, i16),
-    deadzone_radius: f32
+    deadzone: f32
 }
 
 impl AnalogStick {
     pub fn new() -> AnalogStick {
         return AnalogStick {
             position: (0, 0),
-            deadzone_radius: 0.0
+            deadzone: 0.0
         }
     }
 
@@ -95,19 +95,19 @@ impl AnalogStick {
         if f32::sqrt(
             ((self.position.0.pow(2) as i32)
              + (self.position.1.pow(2) as i32)) as f32)
-            <= self.deadzone_radius * (i16::MAX as f32) {
+            <= self.deadzone * (i16::MAX as f32) {
             return (0, 0);
         } else {
             return self.position;
         }
     }
 
-    pub fn get_deadzone_radius(&self) -> f32 {
-        return self.deadzone_radius;
+    pub fn get_deadzone(&self) -> f32 {
+        return self.deadzone;
     }
 
-    pub fn set_deadzone_radius(&mut self, deadzone_radius: f32) -> () {
-        self.deadzone_radius = deadzone_radius;
+    pub fn set_deadzone(&mut self, deadzone: f32) -> () {
+        self.deadzone = deadzone;
     }
 
     pub fn update(&mut self, axis: SdlAxis, value: i16) -> Result<(), String> {
@@ -127,7 +127,7 @@ impl AnalogStick {
 
     pub fn reset(&mut self) -> () {
         self.position = (0, 0);
-        self.deadzone_radius = 0.0;
+        self.deadzone = 0.0;
     }
 
     pub fn merge(&mut self, other: AnalogStick) -> () {
@@ -180,24 +180,24 @@ impl Gamepad {
         return self.left_stick.clone();
     }
 
-    pub fn get_left_deadzone_radius(&self) -> f32 {
-        return self.left_stick.get_deadzone_radius();
+    pub fn get_left_deadzone(&self) -> f32 {
+        return self.left_stick.get_deadzone();
     }
 
-    pub fn set_left_deadzone_radius(&mut self, deadzone_radius: f32) -> () {
-        self.left_stick.set_deadzone_radius(deadzone_radius);
+    pub fn set_left_deadzone(&mut self, deadzone: f32) -> () {
+        self.left_stick.set_deadzone(deadzone);
     }
 
     pub fn get_right_stick(&self) -> AnalogStick {
         return self.right_stick.clone();
     }
 
-    pub fn get_right_deadzone_radius(&self) -> f32 {
-        return self.right_stick.get_deadzone_radius();
+    pub fn get_right_deadzone(&self) -> f32 {
+        return self.right_stick.get_deadzone();
     }
 
-    pub fn set_right_deadzone_radius(&mut self, deadzone_radius: f32) -> () {
-        self.right_stick.set_deadzone_radius(deadzone_radius);
+    pub fn set_right_deadzone(&mut self, deadzone: f32) -> () {
+        self.right_stick.set_deadzone(deadzone);
     }
 
     pub fn connect(&mut self, gamepad_type: GamepadType) -> () {

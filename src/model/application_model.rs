@@ -184,38 +184,38 @@ impl ApplicationModel {
         }
     }
 
-    pub fn get_left_deadzone_radius(&self, i: usize) -> Result<f32, String> {
+    pub fn get_left_deadzone(&self, i: usize) -> Result<f32, String> {
         if let Ok(gamepad_manager) = self.gamepad_manager_mtx.lock() {
-            return Ok(gamepad_manager.get_left_deadzone_radius(i));
+            return Ok(gamepad_manager.get_left_deadzone(i));
         } else {
             return Err(String::from("Failed to lock gamepad manager."));
         }
     }
 
-    pub fn set_left_deadzone_radius(
-        &mut self, i: usize, deadzone_radius: f32
+    pub fn set_left_deadzone(
+        &mut self, i: usize, deadzone: f32
     ) -> Result<(), String> {
         if let Ok(mut gamepad_manager) = self.gamepad_manager_mtx.lock() {
-            gamepad_manager.set_left_deadzone_radius(i, deadzone_radius);
+            gamepad_manager.set_left_deadzone(i, deadzone);
             return Ok(());
         } else {
             return Err(String::from("Failed to lock gamepad manager."));
         }
     }
 
-    pub fn get_right_deadzone_radius(&self, i: usize) -> Result<f32, String> {
+    pub fn get_right_deadzone(&self, i: usize) -> Result<f32, String> {
         if let Ok(gamepad_manager) = self.gamepad_manager_mtx.lock() {
-            return Ok(gamepad_manager.get_right_deadzone_radius(i));
+            return Ok(gamepad_manager.get_right_deadzone(i));
         } else {
             return Err(String::from("Failed to lock gamepad manager."));
         }
     }
 
-    pub fn set_right_deadzone_radius(
-        &mut self, i: usize, deadzone_radius: f32
+    pub fn set_right_deadzone(
+        &mut self, i: usize, deadzone: f32
     ) -> Result<(), String> {
         if let Ok(mut gamepad_manager) = self.gamepad_manager_mtx.lock() {
-            gamepad_manager.set_right_deadzone_radius(i, deadzone_radius);
+            gamepad_manager.set_right_deadzone(i, deadzone);
             return Ok(());
         } else {
             return Err(String::from("Failed to lock gamepad manager."));

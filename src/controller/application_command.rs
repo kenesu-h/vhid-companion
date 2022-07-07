@@ -14,10 +14,10 @@ pub enum ApplicationCommand {
     SetIp { ip: String },
     GetDelay { i: usize },
     SetDelay { i: usize, delay: u8 },
-    GetLeftDeadzoneRadius { i: usize },
-    SetLeftDeadzoneRadius { i: usize, deadzone_radius: f32 },
-    GetRightDeadzoneRadius { i: usize },
-    SetRightDeadzoneRadius { i: usize, deadzone_radius: f32 },
+    GetLeftDeadzone { i: usize },
+    SetLeftDeadzone { i: usize, deadzone: f32 },
+    GetRightDeadzone { i: usize },
+    SetRightDeadzone { i: usize, deadzone: f32 },
     Swap { i: usize, j: usize },
     Connect,
     Disconnect,
@@ -82,18 +82,18 @@ impl ApplicationCommand {
                     }
                 }
             },
-            Self::GetLeftDeadzoneRadius { i } => {
-                match model.get_left_deadzone_radius(i) {
+            Self::GetLeftDeadzone { i } => {
+                match model.get_left_deadzone(i) {
                     Err(e) => { ok = false; out = e },
-                    Ok(deadzone_radius) => {
+                    Ok(deadzone) => {
                         ok = true;
-                        out = deadzone_radius.to_string()
+                        out = deadzone.to_string()
                     }
                 }
             },
-            Self::SetLeftDeadzoneRadius {
-                i, deadzone_radius
-            } => match model.set_left_deadzone_radius(i, deadzone_radius) {
+            Self::SetLeftDeadzone {
+                i, deadzone
+            } => match model.set_left_deadzone(i, deadzone) {
                 Err(e) => { ok = false; out = e },
                 Ok(_) => {
                     ok = true;
@@ -101,18 +101,18 @@ impl ApplicationCommand {
                         "Successfully set left deadzone of gamepad {}.", i)
                 }
             },
-            Self::GetRightDeadzoneRadius { i } => {
-                match model.get_right_deadzone_radius(i) {
+            Self::GetRightDeadzone { i } => {
+                match model.get_right_deadzone(i) {
                     Err(e) => { ok = false; out = e },
-                    Ok(deadzone_radius) => {
+                    Ok(deadzone) => {
                         ok = true;
-                        out = deadzone_radius.to_string()
+                        out = deadzone.to_string()
                     }
                 }
             },
-            Self::SetRightDeadzoneRadius {
-                i, deadzone_radius
-            } => match model.set_right_deadzone_radius(i, deadzone_radius) {
+            Self::SetRightDeadzone {
+                i, deadzone
+            } => match model.set_right_deadzone(i, deadzone) {
                 Err(e) => { ok = false; out = e },
                 Ok(_) => {
                     ok = true;

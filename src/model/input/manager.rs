@@ -45,24 +45,20 @@ impl GamepadManager {
         self.gamepads[i].set_delay(delay);
     }
 
-    pub fn get_left_deadzone_radius(&self, i: usize) -> f32 {
-        return self.gamepads[i].get_left_deadzone_radius();
+    pub fn get_left_deadzone(&self, i: usize) -> f32 {
+        return self.gamepads[i].get_left_deadzone();
     }
 
-    pub fn set_left_deadzone_radius(
-        &mut self, i: usize, deadzone_radius: f32
-    ) -> () {
-        self.gamepads[i].set_left_deadzone_radius(deadzone_radius);
+    pub fn set_left_deadzone(&mut self, i: usize, deadzone: f32) -> () {
+        self.gamepads[i].set_left_deadzone(deadzone);
     }
 
-    pub fn get_right_deadzone_radius(&self, i: usize) -> f32 {
-        return self.gamepads[i].get_right_deadzone_radius();
+    pub fn get_right_deadzone(&self, i: usize) -> f32 {
+        return self.gamepads[i].get_right_deadzone();
     }
 
-    pub fn set_right_deadzone_radius(
-        &mut self, i: usize, deadzone_radius: f32
-    ) -> () {
-        self.gamepads[i].set_right_deadzone_radius(deadzone_radius);
+    pub fn set_right_deadzone(&mut self, i: usize, deadzone: f32) -> () {
+        self.gamepads[i].set_right_deadzone(deadzone);
     }
 
     pub fn swap(&mut self, i: usize, j: usize) -> () {
