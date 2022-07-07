@@ -143,6 +143,7 @@ impl UdpPacket {
 
 struct SysmoduleUdpWriter {
     ips: Vec<String>,
+    formatted: Vec<String>,
     writer: UdpSocket
 }
 
@@ -150,6 +151,7 @@ impl SysmoduleUdpWriter {
     pub fn new(udp: UdpSocket) -> SysmoduleUdpWriter {
         return SysmoduleUdpWriter {
             ips: vec!(),
+            formatted: vec!(),
             writer: udp
         }
     }
@@ -159,11 +161,12 @@ impl SysmoduleUdpWriter {
     }
 
     pub fn set_ips(&mut self, ips: Vec<String>) -> () {
+        self.ips = ips;
         let mut formatted: Vec<String> = vec!();
-        for ip in ips {
+        for ip in &self.ips {
             formatted.push(format!("{}:8000", ip));
         }
-        self.ips = formatted;
+        self.formatted = formatted;
     }
 
     pub fn write(
@@ -171,7 +174,7 @@ impl SysmoduleUdpWriter {
     ) -> Result<(), String> {
         let packet: UdpPacket = self.create_packet(anarchy_mode, gamepads);
         let bytes: Vec<u8> = packet.as_bytes();
-        for ip in &self.ips {
+        for ip in &self.formatted {
             if let Err(_) = self.writer.send_to(&bytes, ip) {
                 return Err(String::from("Failed to send packet to sysmodule."));
             }

@@ -78,7 +78,7 @@ impl ApplicationCommand {
                 Err(e) => { ok = false; out = e },
                 Ok(_) => {
                     ok = true;
-                    out = String::from("Successfully set IP.");
+                    out = String::from("Successfully set IPs.");
                 }
             },
             Self::GetDelay { i } => {
