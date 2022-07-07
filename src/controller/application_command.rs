@@ -49,7 +49,7 @@ impl ApplicationCommand {
     pub fn execute(
         self, model: &mut ApplicationModel, stdio_if: &mut StdioInterface
     ) -> () {
-        let mut ok: bool;
+        let ok: bool;
         let out: String;
         match self {
             Self::GetAnarchyMode => {
