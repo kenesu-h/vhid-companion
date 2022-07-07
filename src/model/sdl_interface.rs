@@ -1,6 +1,6 @@
 use std::{
     io::{BufReader, BufRead, BufWriter, Write},
-    process::{Child, ChildStdin, ChildStdout, Command, Stdio},
+    process::{Child, ChildStdin, ChildStdout},
 };
 
 use sdl_event_server::SdlEvent;
