@@ -137,18 +137,12 @@ impl ApplicationCommand {
             },
             Self::RunScript {
                 i, script
-            } => {
-                ok = true;
-                for event in script {
-                    if let Err(_) = model.read_script_event(i, event) {
-                        ok &= false;
-                    }
-                }
-                if ok {
+            } => match model.run_script(i, script) {
+                Err(e) => { ok = false; out = e },
+                Ok(_) => {
+                    ok = true;
                     out = format!(
                         "Successfully ran script for gamepad {}.", i)
-                } else {
-                    out = format!("Failed to run script for gamepad {}.", i);
                 }
             },
             Self::Connect => match model.connect() {

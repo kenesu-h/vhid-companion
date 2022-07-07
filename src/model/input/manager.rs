@@ -64,8 +64,51 @@ impl GamepadManager {
         self.gamepads[i].set_right_deadzone(deadzone);
     }
 
-    pub fn read_script_event(&mut self, i: usize, event: ScriptEvent) -> () {
-        let delay: usize = 0;
+    pub fn run_script(
+        &mut self, i: usize, script: Vec<ScriptEvent>
+    ) -> () {
+        // While this is initialized to 0, we know it'll have some other value
+        // set to it as a result of the loop.
+        let mut which: u32 = 0;
+        for key in self.indices.keys() {
+            if let Some(j) = self.indices.get(key) {
+                if j == &i {
+                    which = *key as u32;
+                }
+            }
+        }
+
+        let mut delay: usize = 0;
+        for event in script {
+            match event {
+                ScriptEvent::AxisMotion { axis, value } 
+                    => self.buffer.insert(
+                        0,
+                        (
+                            SdlEvent::AxisMotion {
+                                timestamp: 0,
+                                which: which,
+                                axis: axis,
+                                value: value
+                            },
+                            delay
+                        )),
+                ScriptEvent::ButtonPress { button, pressed }
+                    => self.buffer.insert(
+                        0,
+                        (
+                            SdlEvent::ButtonPress {
+                                timestamp: 0,
+                                which: which,
+                                button: button,
+                                pressed: pressed
+                            },
+                            delay
+                        )),
+                // Waiting will delay all the events after it.
+                ScriptEvent::Wait { frames } => delay += frames
+            }
+        }
     }
 
     pub fn swap(&mut self, i: usize, j: usize) -> () {

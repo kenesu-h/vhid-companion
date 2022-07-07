@@ -225,12 +225,18 @@ impl ApplicationModel {
         }
     }
 
-    pub fn read_script_event(&mut self, i: usize, event: ScriptEvent) -> Result<(), String> {
-        if let Ok(mut gamepad_manager) = self.gamepad_manager_mtx.lock() {
-            gamepad_manager.read_script_event(i, event);
-            return Ok(());
+    pub fn run_script(
+        &mut self, i: usize, script: Vec<ScriptEvent>
+    ) -> Result<(), String> {
+        if self.state.get_connected().load(Ordering::Relaxed) {
+            if let Ok(mut gamepad_manager) = self.gamepad_manager_mtx.lock() {
+                gamepad_manager.run_script(i, script);
+                return Ok(());
+            } else {
+                return Err(String::from("Failed to lock gamepad manager."));
+            }
         } else {
-            return Err(String::from("Failed to lock gamepad manager."));
+            return Err(String::from("Cannot run script while disconnected."));
         }
     }
 
