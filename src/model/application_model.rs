@@ -150,17 +150,17 @@ impl ApplicationModel {
         return self.state.get_done();
     }
 
-    pub fn get_ip(&self) -> Result<String, String> {
+    pub fn get_ips(&self) -> Result<Vec<String>, String> {
         if let Ok(sys_if) = self.sys_if_mtx.lock() {
-            return Ok(sys_if.get_ip())
+            return Ok(sys_if.get_ips())
         } else {
             return Err(String::from("Failed to lock sysmodule interface."));
         }
     }
 
-    pub fn set_ip(&mut self, ip: String) -> Result<(), String> {
+    pub fn set_ips(&mut self, ips: Vec<String>) -> Result<(), String> {
         if let Ok(mut sys_if) = self.sys_if_mtx.lock() {
-            sys_if.set_ip(ip);
+            sys_if.set_ips(ips);
             return Ok(());
         } else {
             return Err(String::from("Failed to lock sysmodule interface."));
@@ -233,7 +233,7 @@ impl ApplicationModel {
 
     pub fn connect(&mut self) -> Result<(), String> {
         if let Ok(sys_if) = self.sys_if_mtx.lock() {
-            if sys_if.get_ip().is_empty() {
+            if sys_if.get_ips().len() == 0 {
                 return Err(String::from("Cannot connect without an IP."));
             } else {
                 self.state.set_connected(true);

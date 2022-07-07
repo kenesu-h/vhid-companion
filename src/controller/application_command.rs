@@ -16,8 +16,8 @@ use serde_json::json;
 pub enum ApplicationCommand {
     GetAnarchyMode,
     SetAnarchyMode { anarchy_mode: bool },
-    GetIp,
-    SetIp { ip: String },
+    GetIps,
+    SetIps { ips: Vec<String> },
     GetDelay { i: usize },
     SetDelay { i: usize, delay: u8 },
     GetLeftDeadzone { i: usize },
@@ -67,11 +67,11 @@ impl ApplicationCommand {
                     }
                 }
             },
-            Self::GetIp => match model.get_ip() {
+            Self::GetIps => match model.get_ips() {
                 Err(e) => { ok = false; out = e },
-                Ok(ip) => { ok = true; out = ip } 
+                Ok(ips) => { ok = true; out = json!(ips).to_string() } 
             },
-            Self::SetIp { ip } => match model.set_ip(ip) {
+            Self::SetIps { ips } => match model.set_ips(ips) {
                 Err(e) => { ok = false; out = e },
                 Ok(_) => {
                     ok = true;
