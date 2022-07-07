@@ -61,6 +61,7 @@ impl GamepadButton {
             SdlButton::X => Ok(Self::Y),
             SdlButton::Y => Ok(Self::X),
             SdlButton::Back => Ok(Self::Minus),
+            SdlButton::Misc1 => Ok(Self::Capture),
             SdlButton::Guide => Ok(Self::Home),
             SdlButton::Start => Ok(Self::Plus),
             SdlButton::LeftStick => Ok(Self::LST),
